@@ -2,18 +2,11 @@ import "@/styles/globals.css";
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
-import AuthStatus from "@/components/auth-status";
 import { Suspense } from "react";
 import Providers from "@/components/Providers";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const title = "Next.js Prisma Postgres Auth Starter";
-const description =
-  "This is a Next.js starter kit that uses Next-Auth for simple email + password login and a Postgres database to persist the data.";
+const title = "Next 13 Spotify app";
+const description = "Playaround with the spotify api.";
 
 export const metadata: Metadata = {
   title,
@@ -33,8 +26,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.variable}>
+    <html lang="en" className="h-full">
+      <body className="h-full">
         <Providers>
           <Toaster />
           <Suspense fallback="Loading..."></Suspense>
