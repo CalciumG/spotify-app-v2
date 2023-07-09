@@ -46,4 +46,6 @@ export type SpotifyTrack = {
   uri: string;
 };
 
-export type TopTracksResponse = SpotifyTrack[];
+export type TopTracksResponse = {
+  items: SpotifyTrack[];
+};

@@ -3,14 +3,13 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Avatar from "./Avatar";
 import SignOut from "./sign-out";
+import { Transition } from "@headlessui/react";
 
-type User =
-  | {
-      name?: string | null | undefined;
-      email?: string | null | undefined;
-      image?: string | null | undefined;
-    }
-  | undefined;
+type User = {
+  name?: string | null | undefined;
+  email?: string | null | undefined;
+  image?: string | null | undefined;
+};
 
 type Props = {
   user: User;
@@ -23,16 +22,15 @@ export default function UserStatus({ user, pagetype }: Props) {
   if (session.status === "loading") return null;
 
   const greeting = user?.name ? (
-    <div className="flex flex-col items-center p-6 bg-white rounded-lg font-bold text-5xl text-black">
+    <div className="flex items-center justify-center p-6 bg-white rounded-lg font-bold text-5xl text-black h-full">
       Hello {user?.name}!
     </div>
   ) : null;
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col justify-center items-center h-full">
       {greeting}
-      {user?.image && <Avatar url={user?.image} />}
-      <p className="text-2xl text-center">{pagetype} Page!</p>
+      {/* {user?.image && <Avatar url={user?.image} />} */}
       <SignOut />
     </section>
   );
