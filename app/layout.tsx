@@ -1,9 +1,9 @@
 import "@/styles/globals.css";
 import { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import { Suspense } from "react";
 import Providers from "@/components/Providers";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const title = "Next 13 Spotify app";
 const description = "Playaround with the spotify api.";

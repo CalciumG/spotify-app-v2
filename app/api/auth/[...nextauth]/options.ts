@@ -5,6 +5,12 @@ import SpotifyProvider from "next-auth/providers/spotify";
 import prisma from "@/lib/prisma";
 import { compare } from "bcrypt";
 
+import { Session } from "next-auth";
+
+export type MySession = Session & {
+  accessToken: string;
+};
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -32,8 +38,54 @@ export const authOptions: NextAuthOptions = {
     SpotifyProvider({
       clientId: process.env.SPOTIFY_CLIENT_ID ?? "",
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET ?? "",
+      authorization: {
+        params: {
+          scope: "user-top-read",
+        },
+      },
     }),
   ],
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      const isAllowedToSignIn = true;
+      if (isAllowedToSignIn) {
+        return true;
+      } else {
+        // Return false to display a default error message
+        return false;
+        // Or you can return a URL to redirect to:
+        // return '/unauthorized'
+      }
+    },
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
+    },
+    async jwt({ token, user, account, profile, isNewUser }) {
+      // Persist the OAuth access_token and or the user id to the token right after signin
+      if (account) {
+        token.accessToken = account.access_token;
+        token.id = user.id; // Assuming user object has id property.
+      }
+      return token;
+    },
+    async session({ session, token }: { session: any; user: any; token: any }) {
+      const modifiedSession: MySession = {
+        ...session,
+        accessToken: token.accessToken,
+        user: {
+          ...session.user,
+          id: token.id,
+        },
+        expires: session.expires,
+      };
+
+      return modifiedSession;
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);

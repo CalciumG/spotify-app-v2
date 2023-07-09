@@ -1,6 +1,7 @@
 "use client";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import Avatar from "./Avatar";
 import SignOut from "./sign-out";
 
 type User =
@@ -27,21 +28,10 @@ export default function UserStatus({ user, pagetype }: Props) {
     </div>
   ) : null;
 
-  const userImage = user?.image ? (
-    <Image
-      className="border-4 border-black dark:border-slate-500 drop-shadow-xl shadow-black rounded-full mx-auto mt-8"
-      src={user?.image}
-      width={100}
-      height={100}
-      alt={user?.name ?? "Profile Pic"}
-      priority={true}
-    />
-  ) : null;
-
   return (
     <section className="flex flex-col gap-4">
       {greeting}
-      {userImage}
+      {user?.image && <Avatar url={user?.image} />}
       <p className="text-2xl text-center">{pagetype} Page!</p>
       <SignOut />
     </section>
