@@ -21,7 +21,7 @@ export const TopSongs: React.FC = () => {
   } = useSpotifyApi<TopTracksResponse>(accessToken ? endpoint : "");
 
   if (isLoading || status === "loading") {
-    return <div>Loading...</div>;
+    return null;
   }
 
   if (error) {
