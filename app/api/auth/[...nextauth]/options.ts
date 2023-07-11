@@ -28,7 +28,6 @@ export const authOptions: NextAuthOptions = {
             email,
           },
         });
-        // if user doesn't exist or password doesn't match
         if (!user || !(await compare(password, user.password))) {
           throw new Error("Invalid username or password");
         }
@@ -51,25 +50,56 @@ export const authOptions: NextAuthOptions = {
       if (isAllowedToSignIn) {
         return true;
       } else {
-        // Return false to display a default error message
         return false;
-        // Or you can return a URL to redirect to:
-        // return '/unauthorized'
       }
     },
     async redirect({ url, baseUrl }) {
-      // Allows relative callback URLs
       if (url.startsWith("/")) return `${baseUrl}${url}`;
-      // Allows callback URLs on the same origin
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl;
     },
     async jwt({ token, user, account, profile, isNewUser }) {
-      // Persist the OAuth access_token and or the user id to the token right after signin
-      if (account) {
-        token.accessToken = account.access_token;
-        token.id = user.id; // Assuming user object has id property.
+      if (token?.accessTokenExpires && Date.now() > token.accessTokenExpires) {
+        if (
+          !process.env.SPOTIFY_CLIENT_ID ||
+          !process.env.SPOTIFY_CLIENT_SECRET
+        ) {
+          throw new Error("Missing Spotify client ID or secret");
+        }
+
+        const res = await fetch(`https://accounts.spotify.com/api/token`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            grant_type: "refresh_token",
+            refresh_token: token.refreshToken as string,
+            client_id: process.env.SPOTIFY_CLIENT_ID,
+            client_secret: process.env.SPOTIFY_CLIENT_SECRET,
+          }),
+        });
+
+        const refreshedTokens = await res.json();
+
+        if (!res.ok) {
+          throw new Error("Failed to refresh access token");
+        }
+
+        token.accessToken = refreshedTokens.access_token;
+
+        token.accessTokenExpires =
+          Date.now() + refreshedTokens.expires_in * 1000;
       }
+
+      if (account) {
+        token.accessToken = account.access_token as string;
+        token.refreshToken = account.refresh_token as string;
+        token.accessTokenExpires =
+          Date.now() + (account.expires_in as number) * 1000;
+        token.id = user.id;
+      }
+
       return token;
     },
     async session({ session, token }: { session: any; user: any; token: any }) {
