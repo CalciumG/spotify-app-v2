@@ -1,4 +1,5 @@
 "use client";
+import { TopArtists } from "@/components/TopArtists";
 import { TopSongs } from "@/components/TopSongs";
 import UserStatus from "@/components/UserStatus";
 import { useSession } from "next-auth/react";
@@ -16,6 +17,7 @@ export default function ClientPage() {
     <section className="flex flex-col gap-6">
       <UserStatus user={session?.user} pagetype={"Client"} />
       <TopSongs />
+      <TopArtists />
     </section>
   );
 }

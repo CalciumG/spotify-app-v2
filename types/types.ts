@@ -11,6 +11,9 @@ export type SpotifyArtist = {
   name: string;
   type: string;
   uri: string;
+  popularity: number;
+  images: SpotifyImage[];
+  genres: string[];
 };
 
 export type SpotifyTrack = {
@@ -48,4 +51,8 @@ export type SpotifyTrack = {
 
 export type TopTracksResponse = {
   items: SpotifyTrack[];
+};
+
+export type TopArtistsResponse = {
+  items: SpotifyArtist[];
 };
