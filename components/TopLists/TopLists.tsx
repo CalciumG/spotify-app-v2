@@ -1,43 +1,33 @@
-import { useState } from "react";
+import SpotifyWebApi from "spotify-web-api-node";
 import { TopSongs } from "./TopSongs";
 import { TopArtists } from "./TopArtists";
-import { useSpotifyEndpoint } from "hooks/useSpotifyEndpoint";
-import { TopArtistsResponse, TopTracksResponse } from "types/types";
-import { Loader } from "../common/Loader";
-import { Tab } from "../common/Tab";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
+import { ExtendedSession } from "types/types";
 
-export const TopLists: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(0);
-  const { data: artists, isLoading: artistsLoading } =
-    useSpotifyEndpoint<TopArtistsResponse>(
-      "me/top/artists?time_range=short_term&limit=20"
-    );
-  const { data: tracks, isLoading: tracksLoading } =
-    useSpotifyEndpoint<TopTracksResponse>(
-      "me/top/tracks?time_range=short_term&limit=20"
-    );
+export async function TopLists() {
+  const session = (await getServerSession(authOptions)) as ExtendedSession;
+  let accessToken = session?.accessToken;
 
-  if (artistsLoading || tracksLoading) {
-    return <Loader />;
+  if (!accessToken) {
+    return <p>You have no access token fool</p>;
   }
+
+  let api = new SpotifyWebApi();
+  api.setAccessToken(accessToken);
+
+  const [artistsResponse, tracksResponse] = await Promise.all([
+    api.getMyTopArtists({ limit: 20, time_range: "short_term" }),
+    api.getMyTopTracks({ limit: 20, time_range: "short_term" }),
+  ]);
+
+  const artists = artistsResponse.body.items;
+  const tracks = tracksResponse.body.items;
 
   return (
     <div>
-      <div className="flex justify-center items-center mb-5">
-        <div className="flex items-center text-lg">
-          <Tab active={activeTab} setActive={setActiveTab} index={0}>
-            Top Artists
-          </Tab>
-          <Tab active={activeTab} setActive={setActiveTab} index={1}>
-            Top Tracks
-          </Tab>
-        </div>
-      </div>
-      {activeTab === 0 ? (
-        <TopArtists artists={artists?.items || []} />
-      ) : (
-        <TopSongs tracks={tracks?.items || []} />
-      )}
+      <TopArtists artists={artists} />
+      <TopSongs tracks={tracks} />
     </div>
   );
-};
+}

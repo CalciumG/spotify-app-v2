@@ -1,5 +1,9 @@
 ## Project to use the updated spotify api docs and to learn a bit of next 13
 
+So far I've learnt to hate it - leaving this here for ctrl v:
+
+        /*@ts-expect-error Async Server Component */
+
 <p align="center">
   <a href="https://nextjs-postgres-auth.vercel.app/">
     <img src="/public/logo.png" height="96">
