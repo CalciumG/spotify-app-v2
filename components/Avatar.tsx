@@ -8,8 +8,9 @@ type Props = {
 const Avatar: React.FC<Props> = ({ url }) => {
   return (
     <Image
-      height={75}
-      width={75}
+      height={64}
+      width={64}
+      quality={100}
       className="inline-block rounded-full mx-auto"
       src={url}
       alt="Avatar"

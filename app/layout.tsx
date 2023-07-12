@@ -3,7 +3,6 @@ import { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import { Suspense } from "react";
 import Providers from "@/components/Providers";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const title = "Next 13 Spotify app";
 const description = "Playaround with the spotify api.";

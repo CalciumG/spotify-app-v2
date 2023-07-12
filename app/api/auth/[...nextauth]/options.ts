@@ -1,11 +1,42 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import SpotifyProvider from "next-auth/providers/spotify";
-
+import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/prisma";
 import { compare } from "bcrypt";
-
 import { Session } from "next-auth";
+
+async function refreshAccessToken(token: any) {
+  try {
+    const res = await fetch(`https://accounts.spotify.com/api/token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${Buffer.from(
+          `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
+        ).toString("base64")}`,
+      },
+      body: `grant_type=refresh_token&refresh_token=${token.refreshToken}`,
+    });
+
+    const refreshedTokens = await res.json();
+
+    if (!res.ok) {
+      throw new Error("Failed to refresh access token");
+    }
+
+    token.accessToken = refreshedTokens.access_token;
+    token.accessTokenExpires = Date.now() + refreshedTokens.expires_in * 1000;
+
+    return token;
+  } catch (error) {
+    console.log(error);
+
+    return {
+      ...token,
+      error: "RefreshAccessTokenError",
+    };
+  }
+}
 
 export type MySession = Session & {
   accessToken: string;
@@ -45,7 +76,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
+    signIn: async ({ user, account, profile, email, credentials }) => {
       const isAllowedToSignIn = true;
       if (isAllowedToSignIn) {
         return true;
@@ -53,33 +84,15 @@ export const authOptions: NextAuthOptions = {
         return false;
       }
     },
-    async redirect({ url, baseUrl }) {
+    redirect: async ({ url, baseUrl }) => {
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl;
     },
-    async jwt({ token, user, account, profile, isNewUser }) {
+    jwt: async ({ token, user, account, profile, isNewUser }) => {
+      // JWT callback using refreshAccessToken function
       if (token?.accessTokenExpires && Date.now() > token.accessTokenExpires) {
-        const res = await fetch(`https://accounts.spotify.com/api/token`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            Authorization: `Basic ${Buffer.from(
-              `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
-            ).toString("base64")}`,
-          },
-          body: `grant_type=refresh_token&refresh_token=${token.refreshToken}`,
-        });
-
-        const refreshedTokens = await res.json();
-
-        if (!res.ok) {
-          throw new Error("Failed to refresh access token");
-        }
-
-        token.accessToken = refreshedTokens.access_token;
-        token.accessTokenExpires =
-          Date.now() + refreshedTokens.expires_in * 1000;
+        return refreshAccessToken(token);
       }
 
       if (account) {
@@ -92,7 +105,6 @@ export const authOptions: NextAuthOptions = {
 
       return token;
     },
-
     async session({ session, token }: { session: any; user: any; token: any }) {
       const modifiedSession: MySession = {
         ...session,

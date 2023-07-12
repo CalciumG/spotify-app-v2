@@ -1,14 +1,17 @@
 "use client";
+
 import { TopLists } from "@/components/TopLists/TopLists";
 import UserStatus from "@/components/UserStatus";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { useEffect } from "react";
 
 export default function ClientPage() {
   const { data: session } = useSession({
     required: true,
     onUnauthenticated() {
-      redirect("/api/auth/signin?callbackUrl=/");
+      signIn();
+      // redirect("/api/auth/signin?callbackUrl=/");
     },
   });
 
