@@ -60,24 +60,15 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user, account, profile, isNewUser }) {
       if (token?.accessTokenExpires && Date.now() > token.accessTokenExpires) {
-        if (
-          !process.env.SPOTIFY_CLIENT_ID ||
-          !process.env.SPOTIFY_CLIENT_SECRET
-        ) {
-          throw new Error("Missing Spotify client ID or secret");
-        }
-
         const res = await fetch(`https://accounts.spotify.com/api/token`, {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: `Basic ${Buffer.from(
+              `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
+            ).toString("base64")}`,
           },
-          body: new URLSearchParams({
-            grant_type: "refresh_token",
-            refresh_token: token.refreshToken as string,
-            client_id: process.env.SPOTIFY_CLIENT_ID,
-            client_secret: process.env.SPOTIFY_CLIENT_SECRET,
-          }),
+          body: `grant_type=refresh_token&refresh_token=${token.refreshToken}`,
         });
 
         const refreshedTokens = await res.json();
@@ -87,7 +78,6 @@ export const authOptions: NextAuthOptions = {
         }
 
         token.accessToken = refreshedTokens.access_token;
-
         token.accessTokenExpires =
           Date.now() + refreshedTokens.expires_in * 1000;
       }
@@ -102,6 +92,7 @@ export const authOptions: NextAuthOptions = {
 
       return token;
     },
+
     async session({ session, token }: { session: any; user: any; token: any }) {
       const modifiedSession: MySession = {
         ...session,
@@ -111,6 +102,9 @@ export const authOptions: NextAuthOptions = {
           id: token.id,
         },
         expires: session.expires,
+        exp: Math.floor(new Date(session.expires).getTime() / 1000),
+        iat: Math.floor(Date.now() / 1000),
+        refreshToken: token.refreshToken,
       };
 
       return modifiedSession;
