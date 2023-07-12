@@ -1,8 +1,7 @@
-import { SpotifyArtist, TopArtistsResponse } from "types/types";
 import { ListItem } from "../common/ListItem";
 
 type TopArtistsProps = {
-  artists: SpotifyArtist[];
+  artists: SpotifyApi.ArtistObjectFull[];
 };
 
 export const TopArtists: React.FC<TopArtistsProps> = ({ artists }) => {
@@ -15,7 +14,7 @@ export const TopArtists: React.FC<TopArtistsProps> = ({ artists }) => {
       <div className="w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4">Top Artists:</h2>
         <ul className="grid grid-cols-1 gap-4">
-          {artists.map((artist: SpotifyArtist) => (
+          {artists.map((artist: SpotifyApi.ArtistObjectFull) => (
             <ListItem key={artist.id} item={artist} />
           ))}
         </ul>

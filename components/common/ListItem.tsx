@@ -6,7 +6,7 @@ type ListItemProps<T> = {
 };
 
 export const ListItem: React.FC<
-  ListItemProps<SpotifyArtist | SpotifyTrack>
+  ListItemProps<SpotifyApi.ArtistObjectFull | SpotifyApi.TrackObjectFull>
 > = ({ item }) => {
   let imageUrl;
   let title;
