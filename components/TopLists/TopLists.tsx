@@ -17,8 +17,8 @@ export async function TopLists() {
   api.setAccessToken(accessToken);
 
   const [artistsResponse, tracksResponse] = await Promise.all([
-    api.getMyTopArtists({ limit: 20, time_range: "short_term" }),
-    api.getMyTopTracks({ limit: 20, time_range: "short_term" }),
+    api.getMyTopArtists({ limit: 20, time_range: "long_term" }),
+    api.getMyTopTracks({ limit: 20, time_range: "long_term" }),
   ]);
 
   const artists = artistsResponse.body.items;
