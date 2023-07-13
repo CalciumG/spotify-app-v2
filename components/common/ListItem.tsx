@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { SpotifyArtist, SpotifyTrack } from "types/types";
 
 type ListItemProps<T> = {
   item: T;
@@ -13,12 +12,12 @@ export const ListItem: React.FC<
   let description;
 
   if ("images" in item) {
-    const artist = item as SpotifyArtist;
+    const artist = item;
     imageUrl = artist.images[2].url;
     title = artist.name;
-    description = artist.genres.slice(0, 3).join(", ");
+    description = artist.genres.slice(0, 2).join(", ");
   } else {
-    const track = item as SpotifyTrack;
+    const track = item;
     imageUrl = track.album.images[2].url;
     title = track.name;
     description = track.artists.map((artist) => artist.name).join(", ");

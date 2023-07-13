@@ -6,13 +6,14 @@ import { authOptions } from "./api/auth/[...nextauth]/route";
 export default async function Page() {
   const session = await getServerSession(authOptions);
 
-  return (
-    <section className="flex flex-col gap-6">
+  return session?.user ? (
+    <section className="flex flex-col items-center justify-center gap-6">
+      {/*@ts-expect-error Async Server Component */}
+      <TopLists />
+    </section>
+  ) : (
+    <section className="flex flex-col items-center justify-center min-h-screen gap-6">
       <SignInButton />
-      {session?.user && (
-        /*@ts-expect-error Async Server Component */
-        <TopLists />
-      )}
     </section>
   );
 }
