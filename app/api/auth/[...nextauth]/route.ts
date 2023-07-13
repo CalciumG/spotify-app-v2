@@ -68,18 +68,24 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     // Callback when JWT is created
     async jwt({ token, account }: any) {
+      // If account object is present, it means the function was triggered
+      // during the sign in process, so the tokens are updated
       if (account) {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
         token.accessTokenExpires = Date.now() + account.expires_in * 1000;
       }
 
-      // If the access token is valid, return the token
-      if (token.accessTokenExpires && Date.now() < token.accessTokenExpires) {
+      // Add a condition to refresh the token before it actually expires.
+      // The following condition will trigger the refresh 5 minutes (300000 ms) before actual expiry
+      if (
+        token.accessTokenExpires &&
+        Date.now() + 300000 < token.accessTokenExpires
+      ) {
         return token;
       }
 
-      // If the access token has expired, refresh the token
+      // If the access token has expired or is about to expire, refresh the token
       const newToken = await refreshAccessToken(token);
       return newToken;
     },
