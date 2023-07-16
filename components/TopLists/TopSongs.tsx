@@ -1,4 +1,4 @@
-import { ListItem } from "../common/ListItem";
+import { ListItem } from "./ListItem";
 
 type TopSongsProps = {
   tracks: SpotifyApi.TrackObjectFull[];

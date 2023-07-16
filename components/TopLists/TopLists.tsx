@@ -9,6 +9,7 @@ import { TimePeriodDropdown } from "./TimePeriodDropdown";
 import { TimePeriod } from "types/types";
 import { Loader } from "../common/Loader";
 import { Forbidden } from "../common/Forbidden";
+import { TopListSkeleton } from "./Skeletons";
 
 export const TopLists = () => {
   const { api, spotifySession } = useSpotifySessionContext();
@@ -30,8 +31,21 @@ export const TopLists = () => {
     setTimePeriod(newTimePeriod);
   };
 
-  if (spotifySession.status === "loading" || artistsLoading || tracksLoading) {
+  if (spotifySession.status === "loading") {
     return <Loader />;
+  }
+
+  if (artistsLoading || tracksLoading) {
+    return (
+      <div className="flex justify-center items-center">
+        <TopListSkeleton>
+          <TimePeriodDropdown
+            selectedTimePeriod={timePeriod}
+            onTimePeriodChange={handleTimePeriodChange}
+          />
+        </TopListSkeleton>
+      </div>
+    );
   }
 
   if (!api || artistsError || tracksError) {
