@@ -2,10 +2,12 @@ import axios from "axios";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import SpotifyProvider, { SpotifyProfile } from "next-auth/providers/spotify";
+import { PrismaClient } from "@prisma/client";
 
 const SPOTIFY_REFRESH_TOKEN_URL = "https://accounts.spotify.com/api/token";
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
+const prisma = new PrismaClient();
 
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
@@ -52,14 +54,31 @@ export const authOptions: NextAuthOptions = {
       clientSecret: CLIENT_SECRET!,
       authorization: {
         params: {
-          scope: "user-top-read user-read-recently-played",
+          scope: "user-top-read user-read-email user-read-recently-played",
         },
       },
-      profile: (profile: SpotifyProfile) => {
+      profile: async (profile: SpotifyProfile) => {
+        let user = await prisma.user.findUnique({
+          where: {
+            email: profile.email,
+          },
+        });
+
+        if (!user) {
+          user = await prisma.user.create({
+            data: {
+              email: profile.email,
+              spotifyId: profile.id,
+              name: profile.display_name,
+              password: "dummy_password",
+            },
+          });
+        }
+
         return {
-          id: profile.id,
-          name: profile.display_name,
-          email: profile.email,
+          id: user.id.toString(),
+          name: user.name,
+          email: user.email,
           image: profile.images.length > 0 ? profile.images[0].url : undefined,
         };
       },
