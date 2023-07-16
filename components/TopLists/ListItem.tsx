@@ -20,11 +20,11 @@ export const ListItem: React.FC<
     const track = item;
     imageUrl = track.album.images[2].url;
     title = track.name;
-    description = track.artists.map((artist) => artist.name).join(", ");
+    description = track.artists[0].name;
   }
 
   return (
-    <li className="bg-white shadow overflow-hidden sm:rounded-lg transition duration-200 ease-in-out transform hover:-translate-y-1 hover:scale-105 w-full">
+    <li className="bg-white shadow overflow-hidden sm:rounded-lg transition duration-200 ease-in-out transform hover:-translate-y-1 hover:scale-105 w-full xss:w-[368px]">
       <div className="flex items-center">
         <Image
           src={imageUrl}
@@ -36,10 +36,10 @@ export const ListItem: React.FC<
           loading="eager"
         />
         <div className="flex-1">
-          <h3 className="text-lg leading-6 font-medium text-gray-900 overflow-hidden">
+          <h3 className="text-md leading-5 font-medium text-gray-900 overflow-">
             {title}
           </h3>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500 capitalize overflow-ellipsis overflow-hidden">
+          <p className="mt-1 max-w-2xl text-sm text-gray-500 capitalize overflow-ellipsis">
             {description}
           </p>
         </div>
