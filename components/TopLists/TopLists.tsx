@@ -10,7 +10,7 @@ import { TimePeriod } from "types/types";
 import { Loader } from "../common/Loader";
 import { Forbidden } from "../common/Forbidden";
 
-export const ClientTopLists = () => {
+export const TopLists = () => {
   const { api, spotifySession } = useSpotifySessionContext();
   const [timePeriod, setTimePeriod] = React.useState<TimePeriod>("short_term");
 
