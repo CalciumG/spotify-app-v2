@@ -10,15 +10,13 @@ export const TopArtists: React.FC<TopArtistsProps> = ({ artists }) => {
   }
 
   return (
-    <div className="flex justify-center items-center p-5">
-      <div className="w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Top Artists:</h2>
-        <ul className="grid grid-cols-1 gap-4">
-          {artists.map((artist: SpotifyApi.ArtistObjectFull) => (
-            <ListItem key={artist.id} item={artist} />
-          ))}
-        </ul>
-      </div>
+    <div className="my-4">
+      <h2 className="text-2xl font-bold mb-4">Top Artists:</h2>
+      <ul className="grid grid-cols-1 gap-4">
+        {artists.map((artist: SpotifyApi.ArtistObjectFull) => (
+          <ListItem key={artist.id} item={artist} />
+        ))}
+      </ul>
     </div>
   );
 };

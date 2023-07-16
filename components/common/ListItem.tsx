@@ -15,7 +15,7 @@ export const ListItem: React.FC<
     const artist = item;
     imageUrl = artist.images[2].url;
     title = artist.name;
-    description = artist.genres.slice(0, 2).join(", ");
+    description = artist.genres[0];
   } else {
     const track = item;
     imageUrl = track.album.images[2].url;
@@ -24,7 +24,7 @@ export const ListItem: React.FC<
   }
 
   return (
-    <li className="bg-white shadow overflow-hidden sm:rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+    <li className="bg-white shadow overflow-hidden sm:rounded-lg transition duration-200 ease-in-out transform hover:-translate-y-1 hover:scale-105 w-full">
       <div className="flex items-center">
         <Image
           src={imageUrl}
@@ -35,11 +35,11 @@ export const ListItem: React.FC<
           quality={100}
           loading="eager"
         />
-        <div>
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
+        <div className="flex-1">
+          <h3 className="text-lg leading-6 font-medium text-gray-900 overflow-hidden">
             {title}
           </h3>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500 capitalize">
+          <p className="mt-1 max-w-2xl text-sm text-gray-500 capitalize overflow-ellipsis overflow-hidden">
             {description}
           </p>
         </div>
