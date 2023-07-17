@@ -6,7 +6,7 @@ import { useRecommendations } from "hooks/useRecommendation";
 import { RecommendationsModal } from "./RecommendationsModal";
 
 export const Recommendations = () => {
-  const { api, spotifySession } = useSpotifySessionContext();
+  const { api } = useSpotifySessionContext();
   const [open, setOpen] = useState(false);
 
   const {
