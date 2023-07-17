@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { useTopArtists, useTopTracks } from "hooks";
 import SpotifyWebApi from "spotify-web-api-node";
-import { useTopTracks } from "./useTopTracks";
-import { useTopArtists } from "./useTopArtists";
 
 export const useRecommendations = (
   api: SpotifyWebApi | null,

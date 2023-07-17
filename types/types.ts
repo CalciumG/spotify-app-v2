@@ -12,3 +12,5 @@ export type FetcherFunction<T> = (
 ) => Promise<T>;
 
 export type TimePeriod = "short_term" | "medium_term" | "long_term";
+
+export type Category = "artists" | "songs";

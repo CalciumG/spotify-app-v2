@@ -5,14 +5,11 @@ import { TopSongs } from "./TopSongs";
 import { TopArtists } from "./TopArtists";
 import { useSpotifySessionContext } from "context/SessionProvider";
 import { useTopArtists, useTopTracks } from "hooks";
+import { Category, TimePeriod } from "types/types";
 import { TimePeriodDropdown } from "./TimePeriodDropdown";
-import { TimePeriod } from "types/types";
-import { Loader } from "../common/Loader";
-import { Forbidden } from "../common/Forbidden";
 import { TopListSkeleton } from "./Skeletons";
 import { CategoryDropdown } from "./CategoryDropdown";
-
-type Category = "artists" | "songs";
+import { Loader, Forbidden } from "../common";
 
 export const TopLists = () => {
   const { api, spotifySession } = useSpotifySessionContext();

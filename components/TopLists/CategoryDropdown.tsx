@@ -2,8 +2,7 @@ import React, { Fragment, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { classNames } from "utils/classNames";
-
-type Category = "artists" | "songs";
+import { Category } from "types/types";
 
 type CategoryDropdownProps = {
   onCategoryChange: (value: Category) => void;

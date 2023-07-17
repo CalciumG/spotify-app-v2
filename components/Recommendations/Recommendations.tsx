@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useSpotifySessionContext } from "context/SessionProvider";
 import { useRecommendations } from "hooks/useRecommendation";
 import { RecommendationsModal } from "./RecommendationsModal";
+import { Loader, Forbidden } from "../common";
 
 export const Recommendations = () => {
   const { api } = useSpotifySessionContext();
@@ -16,11 +17,11 @@ export const Recommendations = () => {
   } = useRecommendations(api, 140);
 
   if (recommendationsLoading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   if (recommendationsError) {
-    return <div>Error loading recommendations</div>;
+    return <Forbidden />;
   }
 
   return (
