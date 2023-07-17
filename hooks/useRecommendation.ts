@@ -5,8 +5,7 @@ import { useTopArtists } from "./useTopArtists";
 
 export const useRecommendations = (
   api: SpotifyWebApi | null,
-  targetBpm: number,
-  genre: string
+  targetBpm: number
 ) => {
   // First, fetch the user's top tracks and artists
   const { data: topTracks } = useTopTracks(api, "short_term");
@@ -26,16 +25,11 @@ export const useRecommendations = (
         throw new Error("Top artists not found");
       }
 
-      // Filter the top artists based on genre
-      const filteredArtists = await Promise.all(
-        topArtists.items
-          .sort(() => Math.random() - 0.5)
-          .slice(0, 20) // get more than top 5 to ensure enough seeds after filtering
-          .map(async (artist) => {
-            const response = await api.getArtist(artist.id);
-            return response.body.genres.includes(genre) ? artist : null;
-          })
-      );
+      // Get a list of artist IDs and randomly select 20 of them
+      const filteredArtists = topArtists.items
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 20) // get more than top 5 to ensure enough seeds after filtering
+        .map((artist) => artist.id);
 
       // get the 5 random track ids
       const seedTracks = topTracks.items
@@ -45,14 +39,14 @@ export const useRecommendations = (
 
       // get the 5 random artist ids
       const seedArtists = filteredArtists
-        .filter((artist) => artist !== null)
-        .slice(0, 5)
-        .map((artist) => artist!.id); // after filtering out null values, we can assert that artist is not null
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 5); // no need to filter or assert non-nullity as filteredArtists is an array of strings
 
       // Make a call with track seeds
       const trackResponse = await api.getRecommendations({
         seed_tracks: seedTracks,
         target_tempo: targetBpm,
+        min_popularity: 60,
         limit: 20,
       });
 
@@ -60,6 +54,7 @@ export const useRecommendations = (
       const artistResponse = await api.getRecommendations({
         seed_artists: seedArtists,
         target_tempo: targetBpm,
+        min_popularity: 60,
         limit: 20,
       });
 

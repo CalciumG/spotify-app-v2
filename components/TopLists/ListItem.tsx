@@ -24,7 +24,7 @@ export const ListItem: React.FC<
   }
 
   return (
-    <li className="bg-white shadow overflow-hidden sm:rounded-lg transition duration-200 ease-in-out transform hover:-translate-y-1 hover:scale-105 w-full xss:w-[368px]">
+    <li className="bg-white shadow overflow-hidden sm:rounded-lg transition duration-200 ease-in-out transform hover:-translate-y-1 hover:scale-105 w-full xss:w-[368px] cursor-default">
       <div className="flex items-center">
         <Image
           src={imageUrl}
