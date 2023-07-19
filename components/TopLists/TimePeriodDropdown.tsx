@@ -3,6 +3,7 @@ import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { TimePeriod } from "types/types";
 import { classNames } from "utils/classNames";
+import SignOut from "../sign-out";
 
 type TimePeriodDropdownProps = {
   onTimePeriodChange: (value: TimePeriod) => void;

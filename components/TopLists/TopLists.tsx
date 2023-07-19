@@ -10,6 +10,7 @@ import { TimePeriodDropdown } from "./TimePeriodDropdown";
 import { TopListSkeleton } from "./Skeletons";
 import { CategoryDropdown } from "./CategoryDropdown";
 import { Loader, Forbidden } from "../common";
+import SignOut from "../sign-out";
 
 export const TopLists = () => {
   const { api, spotifySession } = useSpotifySessionContext();
@@ -26,7 +27,7 @@ export const TopLists = () => {
     data: tracks,
     isLoading: tracksLoading,
     error: tracksError,
-  } = useTopTracks(api, timePeriod, 1);
+  } = useTopTracks(api, timePeriod);
 
   const handleTimePeriodChange = (newTimePeriod: TimePeriod) => {
     setTimePeriod(newTimePeriod);
@@ -62,7 +63,8 @@ export const TopLists = () => {
   }
 
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex flex-col justify-center items-center">
+      <SignOut />
       <div className="w-full min-w-xs sm:min-w-full p-4">
         <TimePeriodDropdown
           selectedTimePeriod={timePeriod}
