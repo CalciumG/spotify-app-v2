@@ -56,9 +56,14 @@ export async function POST(res: NextApiResponse) {
   });
 
   if (!response.body.items) {
-    return res
-      .status(500)
-      .json({ msg: "Unable to retrieve top songs from Spotify" });
+    return NextResponse.json(
+      {
+        msg: `No items found in response: ${JSON.stringify(response)}`,
+      },
+      {
+        status: 501,
+      }
+    );
   }
 
   const topSongsData = response.body.items.map((song: any) => ({
