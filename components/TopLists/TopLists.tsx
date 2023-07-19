@@ -26,7 +26,7 @@ export const TopLists = () => {
     data: tracks,
     isLoading: tracksLoading,
     error: tracksError,
-  } = useTopTracks(api, timePeriod);
+  } = useTopTracks(api, timePeriod, 1);
 
   const handleTimePeriodChange = (newTimePeriod: TimePeriod) => {
     setTimePeriod(newTimePeriod);

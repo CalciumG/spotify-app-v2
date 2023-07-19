@@ -36,7 +36,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
       accessTokenExpires: Date.now() + data.expires_in * 1000,
     };
   } catch (error) {
-    console.log(error, "Error while refreshing access token");
+    console.error(error, "Error while refreshing access token");
     // In case of error, update token with error information
     return {
       ...token,
@@ -52,7 +52,7 @@ export const authOptions: NextAuthOptions = {
       clientSecret: CLIENT_SECRET!,
       authorization: {
         params: {
-          scope: "user-top-read user-read-recently-played",
+          scope: "user-top-read user-read-email user-read-recently-played",
         },
       },
       profile: (profile: SpotifyProfile) => {
@@ -66,18 +66,13 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    // Callback when JWT is created
-    async jwt({ token, account }: any) {
-      // If account object is present, it means the function was triggered
-      // during the sign in process, so the tokens are updated
+    async jwt({ token, account, profile }: any) {
       if (account) {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
         token.accessTokenExpires = Date.now() + account.expires_in * 1000;
       }
 
-      // Add a condition to refresh the token before it actually expires.
-      // The following condition will trigger the refresh 5 minutes (300000 ms) before actual expiry
       if (
         token.accessTokenExpires &&
         Date.now() + 300000 < token.accessTokenExpires
@@ -85,13 +80,21 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
 
-      // If the access token has expired or is about to expire, refresh the token
       const newToken = await refreshAccessToken(token);
+
+      if (profile) {
+        newToken.user = profile;
+      }
+
       return newToken;
     },
     async session({ session, token }: any) {
       session.accessToken = token.accessToken;
-      console.log(session, "session callback");
+
+      if (token.user) {
+        session.spotifyId = token.user.id;
+      }
+
       return session;
     },
   },

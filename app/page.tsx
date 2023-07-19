@@ -1,4 +1,5 @@
 import { Recommendations } from "@/components/Recommendations/Recommendations";
+import { SaveTopSongs } from "@/components/SaveTopSongs/SaveTopSongs";
 import { SignInButton } from "@/components/SignInButton";
 import { TopLists } from "@/components/TopLists/TopLists";
 import { getServerSession } from "next-auth";
@@ -11,6 +12,7 @@ export default async function Page() {
     <section className="flex flex-col items-center justify-center gap-6">
       <TopLists />
       <Recommendations />
+      <SaveTopSongs />
     </section>
   ) : (
     <section className="flex flex-col items-center justify-center min-h-screen gap-6">
