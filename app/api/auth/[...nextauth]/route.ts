@@ -9,7 +9,7 @@ const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
-    console.log("refreshing access token");
+    console.log("refreshing access token!");
     const basicAuth = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString(
       "base64"
     );
