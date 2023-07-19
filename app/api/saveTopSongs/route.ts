@@ -19,7 +19,14 @@ export async function POST(res: NextApiResponse) {
   )) as SessionWithAccessToken;
 
   if (!session || !session.accessToken) {
-    return res.status(401).json({ msg: "Unauthorized" });
+    return NextResponse.json(
+      {
+        msg: "Unauthorized",
+      },
+      {
+        status: 401,
+      }
+    );
   }
 
   const lastAddedSong = await prisma.topSongs.findFirst({
